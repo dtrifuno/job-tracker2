@@ -1,0 +1,39 @@
+version: "3.4"
+
+services:
+  jobtrackerserver:
+    image: jobtrackerserver
+    build:
+      context: server
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+      REDIS_HOST: redis
+      DB_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+    volumes:
+      - ./server:/usr/src/server
+    ports:
+      - 3000:3000
+      - 9229:9229
+    depends_on:
+      - db
+    command:
+      [
+        "sh",
+        "-c",
+        '[ -d "node_modules" ] && yarn run dev || yarn install --frozen-lockfile && yarn run dev',
+      ]
+
+  db:
+    image: postgres:alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./db_vol:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped

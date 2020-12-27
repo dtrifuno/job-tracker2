@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Docker Node.js Launch",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "tsc-watch",
+            "runtimeExecutable": "docker-compose",
+            "runtimeArgs": [
+                "up"
+            ],
+            "port": 9222,
+            "restart": true,
+            "sourceMaps": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "package": "${workspaceFolder}/server/package.json",
+            "localRoot": "${workspaceFolder}/server"
+        },
+    ]
+}
