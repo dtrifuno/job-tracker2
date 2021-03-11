@@ -8,6 +8,7 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: development
+      SESSION_SECRET: ${SESSION_SECRET}
       REDIS_HOST: redis
       DB_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
     volumes:
@@ -17,6 +18,7 @@ services:
       - 9229:9229
     depends_on:
       - db
+      - redis
     command:
       [
         "sh",
@@ -37,3 +39,17 @@ services:
   redis:
     image: redis:alpine
     restart: unless-stopped
+
+  jobtrackerclient:
+    image: jobtrackerclient
+    build:
+      context: client
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./client:/usr/src/client
+    command:
+      [
+        "sh",
+        "-c",
+        '[ -d "node_modules" ] && yarn run dev || yarn install --frozen-lockfile && yarn run dev',
+      ]
